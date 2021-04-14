@@ -2,12 +2,14 @@ package ru.job4j.todo.persistence;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.todo.persistence.models.TaskDTO;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Класс, реализующий персистенс слой todo-сервиса.
@@ -38,20 +40,9 @@ public class TasksDAO {
      *
      * @return список задач.
      */
-    public List<TaskDTO> getAllTasks() {
-        List result;
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from ru.job4j.todo.persistence.models.TaskDTO t order by t.id desc ").list();
-            session.getTransaction().commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-        return result;
+    public List getAllTasks() {
+        return this.execute(session -> session.createQuery(
+                "from ru.job4j.todo.persistence.models.TaskDTO t order by t.id desc ").list());
     }
 
     /**
@@ -59,20 +50,24 @@ public class TasksDAO {
      *
      * @return список задач.
      */
-    public List<TaskDTO> getIncompleteTasks() {
-        List result;
-        Session session = sessionFactory.openSession();
+    public List getIncompleteTasks() {
+        return this.execute(session -> session.createQuery(
+                "from ru.job4j.todo.persistence.models.TaskDTO t where t.done = false order by t.id desc").list());
+    }
+
+    private <T> T execute(final Function<Session, T> command) {
+        final Session session = sessionFactory.openSession();
+        final Transaction transaction = session.beginTransaction();
         try {
-            session.beginTransaction();
-            result = session.createQuery("from ru.job4j.todo.persistence.models.TaskDTO t where t.done = false order by t.id desc").list();
-            session.getTransaction().commit();
+            T result = command.apply(session);
+            transaction.commit();
+            return result;
         } catch (final Exception e) {
             session.getTransaction().rollback();
             throw e;
         } finally {
             session.close();
         }
-        return result;
     }
 
     /**
@@ -82,18 +77,10 @@ public class TasksDAO {
      * @return добавленная задача с проставленным идентификатором.
      */
     public TaskDTO addTask(TaskDTO taskDTO) {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
+        return this.execute(session -> {
             session.save(taskDTO);
-            session.getTransaction().commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-        return taskDTO;
+            return taskDTO;
+        });
     }
 
     /**
@@ -103,19 +90,7 @@ public class TasksDAO {
      * @return объект задачи с заданным идентификатором.
      */
     public TaskDTO getTaskById(int id) {
-        TaskDTO result;
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            result = session.get(TaskDTO.class, id);
-            session.getTransaction().commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-        return result;
+        return this.execute(session -> session.get(TaskDTO.class, id));
     }
 
     /**
@@ -126,23 +101,15 @@ public class TasksDAO {
      */
     public boolean updateTask(TaskDTO taskDTO) {
         boolean result;
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
+        result = this.execute(session -> {
             TaskDTO updatingTaskDTO = session.get(TaskDTO.class, taskDTO.getId());
             session.evict(updatingTaskDTO);
             updatingTaskDTO.setDescription(taskDTO.getDescription());
             updatingTaskDTO.setCreated(taskDTO.getCreated());
             updatingTaskDTO.setDone(taskDTO.isDone());
             session.update(updatingTaskDTO);
-            session.getTransaction().commit();
-            result = true;
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
+            return true;
+        });
         return result;
     }
 
@@ -152,16 +119,9 @@ public class TasksDAO {
      * @param taskDTO объект удаляемой задачи.
      */
     public void deleteTask(TaskDTO taskDTO) {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
+        this.execute(session -> {
             session.delete(taskDTO);
-            session.getTransaction().commit();
-        } catch (final Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
+            return true;
+        });
     }
 }
