@@ -28,7 +28,9 @@ function getTasks() {
             let description = task.description;
             let created = formatDate(task.created);
             let done = task.done;
+            let author = task.user.name;
             let checked = done ? "checked" : "";
+            let disabled = $("#user").text().trim() === author ? "" : "disabled";
             let row = `
         <tr>
             <td>${description}</td>
@@ -36,9 +38,10 @@ function getTasks() {
             <td>
                 <div class="change_state_div" id="change_state_${id}">
                     <input hidden name="id" value="${id}">
-                    <input type="checkbox" name="state" ${checked}>
+                    <input type="checkbox" name="state" ${checked} ${disabled}>
                 </div>
             </td>
+            <td>${author}</td>
         </tr>
         `;
             $("#table_body").append(row);
@@ -93,7 +96,6 @@ $(document).on("change", ".change_state_div", function () {
         let state_elem = $(this).children()[1];
         let send_id = $(id_elem).attr("value");
         let send_state = $(state_elem)[0].checked;
-        console.log(send_id, send_state);
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/todo/task.do',
@@ -102,7 +104,6 @@ $(document).on("change", ".change_state_div", function () {
                 state: send_state
             }
         }).done(function (data) {
-            console.log("in done")
             getTasks();
         }).fail(function (error) {
             console.log("Что-то пошло не так! Запрос не выполнился!")

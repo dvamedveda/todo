@@ -2,6 +2,7 @@ package ru.job4j.todo.controller.servlet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.service.ServiceManager;
 import ru.job4j.todo.service.TodoService;
 
@@ -9,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -59,7 +61,9 @@ public class TodoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String description = req.getParameter("description");
-        LOGGER.info("Creating new task with description \"" + description + "\"");
-        service.addNewTask(description);
+        HttpSession session = req.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        LOGGER.info("Creating new task with description \"" + description + "\", author: " + user.getName() + ".");
+        service.addNewTask(description, user);
     }
 }

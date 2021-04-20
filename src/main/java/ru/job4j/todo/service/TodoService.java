@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.todo.persistence.TasksDAO;
 import ru.job4j.todo.persistence.models.TaskDTO;
+import ru.job4j.todo.persistence.models.UserDTO;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -56,8 +57,8 @@ public class TodoService {
      * @param description описание новой задачи.
      * @return объект созданной задачи.
      */
-    public TaskDTO addNewTask(String description) {
-        TaskDTO task = new TaskDTO(description, new Timestamp(System.currentTimeMillis()), false);
+    public TaskDTO addNewTask(String description, UserDTO user) {
+        TaskDTO task = new TaskDTO(description, new Timestamp(System.currentTimeMillis()), false, user);
         return tasksDAO.addTask(task);
     }
 
@@ -93,5 +94,13 @@ public class TodoService {
      */
     public TaskDTO getTaskById(int id) {
         return tasksDAO.getTaskById(id);
+    }
+
+    /**
+     * Удалить задачи пользователя.
+     * @param id идентификатор пользователя.
+     */
+    public void deleteUserTasks(int id) {
+        tasksDAO.deleteUserTasks(id);
     }
 }

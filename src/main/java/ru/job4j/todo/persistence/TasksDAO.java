@@ -3,9 +3,6 @@ package ru.job4j.todo.persistence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.todo.persistence.models.TaskDTO;
 
 import java.util.List;
@@ -25,14 +22,7 @@ public class TasksDAO {
      * Инициализация фабрики сессий.
      */
     public TasksDAO() {
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();
-        SessionFactory sf = null;
-        try {
-            sf = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-        } catch (Exception e) {
-            StandardServiceRegistryBuilder.destroy(registry);
-        }
-        sessionFactory = sf;
+        sessionFactory = SessionFactoryManager.getFactory();
     }
 
     /**
@@ -42,7 +32,20 @@ public class TasksDAO {
      */
     public List getAllTasks() {
         return this.execute(session -> session.createQuery(
-                "from ru.job4j.todo.persistence.models.TaskDTO t order by t.id desc ").list());
+                "from ru.job4j.todo.persistence.models.TaskDTO t order by t.id desc").list());
+    }
+
+    /**
+     * Получить все задачи пользователя.
+     *
+     * @param id идентификатор пользователя.
+     * @return
+     */
+    public List getUserAllTasks(int id) {
+        return this.execute(session -> session.createQuery(
+                "from ru.job4j.todo.persistence.models.TaskDTO t where t.user.id=:id order by t.id desc")
+                .setParameter("id", id)
+                .list());
     }
 
     /**
@@ -55,6 +58,13 @@ public class TasksDAO {
                 "from ru.job4j.todo.persistence.models.TaskDTO t where t.done = false order by t.id desc").list());
     }
 
+    /**
+     * Декоратор для выполнения команд хибернейту.
+     *
+     * @param command лямбда функция для выполнения.
+     * @param <T>     результат выполнения лямбды.
+     * @return результат работы декоратора.
+     */
     private <T> T execute(final Function<Session, T> command) {
         final Session session = sessionFactory.openSession();
         final Transaction transaction = session.beginTransaction();
@@ -107,6 +117,7 @@ public class TasksDAO {
             updatingTaskDTO.setDescription(taskDTO.getDescription());
             updatingTaskDTO.setCreated(taskDTO.getCreated());
             updatingTaskDTO.setDone(taskDTO.isDone());
+            updatingTaskDTO.setUser(taskDTO.getUser());
             session.update(updatingTaskDTO);
             return true;
         });
@@ -123,5 +134,17 @@ public class TasksDAO {
             session.delete(taskDTO);
             return true;
         });
+    }
+
+    /**
+     * Удалить задачи, принадлежащие пользователю.
+     *
+     * @param id идентификатор пользователя.
+     */
+    public void deleteUserTasks(int id) {
+        List<TaskDTO> userTasks = this.getUserAllTasks(id);
+        for (TaskDTO task : userTasks) {
+            this.deleteTask(task);
+        }
     }
 }

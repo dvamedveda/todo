@@ -36,14 +36,19 @@ public class TaskDTO {
     @Column
     private boolean done;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserDTO user;
+
     public TaskDTO() {
     }
 
-    public TaskDTO(String description, Timestamp created, boolean done) {
+    public TaskDTO(String description, Timestamp created, boolean done, UserDTO userDTO) {
         this.id = 0;
         this.description = description;
         this.created = created;
         this.done = done;
+        this.user = userDTO;
     }
 
     public int getId() {
@@ -76,5 +81,13 @@ public class TaskDTO {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 }

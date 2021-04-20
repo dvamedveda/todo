@@ -27,10 +27,37 @@
 <script type="text/javascript" src='<c:url value="/scripts/index.js"/>' defer></script>
 
 <div class="container">
+    <div class="row pt-3 mx-2 px-2 my-1 py-1">
+        <div class="col-8">
+        </div>
+        <div class="col align-self-end">
+            <div class="row">
+                <div class="col align-self-start">
+                    <p class="text-right">
+                        Вы вошли:
+                    </p>
+                </div>
+                <div class="col align-self-start">
+                    <div id="user">
+                        <p class="text-left">
+                            <c:out value="${sessionScope.user.name}"/>
+                        </p>
+                    </div>
+                </div>
+                <div class="col align-self-start">
+                    <form action="<c:url value="/logout.do"/>" method="post">
+                        <button id="logout" type="submit" class="btn btn-success mx-auto">Выйти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="head_row" class="row pt-3 mx-2 px-2 my-1 py-1">
-        <h4>
-            Добавить новую задачу:
-        </h4>
+        <div class="col-8">
+            <h4>
+                Добавить новую задачу:
+            </h4>
+        </div>
     </div>
 
     <div class="row pt-3 mx-2 px-2 my-1 py-1">
@@ -69,13 +96,13 @@
         </div>
     </div>
     <div id="list_row" class="row pt-3 mx-2 px-2 my-1 py-1">
-        <div hidden id="task_url"><c:url value="/task.do"/></div>
         <table class="table table-bordered mx-2 px-2 my-1 py-1">
             <thead>
             <tr id="table_head_row">
                 <th>Описание задачи</th>
                 <th style="width: 20%;">Создана</th>
-                <th style="width: 15%;">Выполнена</th>
+                <th style="width: 10%;">Выполнена</th>
+                <th style="width: 10%;">Автор</th>
             </tr>
             </thead>
             <tbody id="table_body">

@@ -5,10 +5,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import ru.job4j.todo.persistence.models.TaskDTO;
+import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
 import ru.job4j.todo.persistence.store.StoreSettings;
 import ru.job4j.todo.service.ServiceManager;
 import ru.job4j.todo.service.TodoService;
+import ru.job4j.todo.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +39,9 @@ public class TaskServletTest {
     @Test
     public void whenCheckTaskThenSuccess() throws Exception {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
-        TaskDTO task = todoService.addNewTask("new task from controller");
+        UserService userService = ServiceManager.getInstance().getUserService();
+        UserDTO newUser = userService.addNewUser("som1@email", "password", "name");
+        TaskDTO task = todoService.addNewTask("new task from controller", newUser);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
         Mockito.when(req.getParameter("id")).thenReturn(Integer.toString(task.getId()));
@@ -48,5 +52,6 @@ public class TaskServletTest {
         Assert.assertThat(result.getCreated(), is(task.getCreated()));
         Assert.assertThat(result.isDone(), is(true));
         todoService.deleteTask(result.getId());
+        userService.deleteUser(newUser);
     }
 }

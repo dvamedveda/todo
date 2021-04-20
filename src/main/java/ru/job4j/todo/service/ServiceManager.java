@@ -2,9 +2,11 @@ package ru.job4j.todo.service;
 
 public class ServiceManager {
     private final TodoService todoService;
+    private final UserService userService;
 
     private ServiceManager() {
         todoService = new TodoService();
+        userService = new UserService();
     }
 
     /**
@@ -30,5 +32,13 @@ public class ServiceManager {
      */
     public TodoService getTodoService() {
         return todoService;
+    }
+
+    /**
+     * Получить объект сервиса для работы с пользователями.
+     * @return объект для работы с пользователями.
+     */
+    public UserService getUserService() {
+        return this.userService;
     }
 }
