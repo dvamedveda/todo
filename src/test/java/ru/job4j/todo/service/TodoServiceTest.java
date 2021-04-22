@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.TaskDTO;
 import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
@@ -28,7 +29,7 @@ public class TodoServiceTest {
      * Проверка добавления задачи на слое сервиса.
      */
     @Test
-    public void whenAddTaskThenSuccess() {
+    public void whenAddTaskThenSuccess() throws UserAlreadyExistException {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test1@test1", "password", "some_name");
@@ -47,7 +48,7 @@ public class TodoServiceTest {
      * Проверка изменения статуса задачи на слое сервиса.
      */
     @Test
-    public void whenCheckTaskThenSuccess() {
+    public void whenCheckTaskThenSuccess() throws UserAlreadyExistException {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test2@test2", "password", "some_name");
@@ -67,7 +68,7 @@ public class TodoServiceTest {
      * Проверка получения списка всех задача на слое сервиса.
      */
     @Test
-    public void whenGetAllTasksThenCorrect() {
+    public void whenGetAllTasksThenCorrect() throws UserAlreadyExistException {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test3@test3", "password", "some_name");
@@ -106,7 +107,7 @@ public class TodoServiceTest {
      * Проверка получения списка незавершенных задач на слое сервиса.
      */
     @Test
-    public void whenGetIncompletedTasksThenCorrect() {
+    public void whenGetIncompletedTasksThenCorrect() throws UserAlreadyExistException {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test4@test4", "password", "some_name");
@@ -136,7 +137,7 @@ public class TodoServiceTest {
      * Проверка удаления тасков пользователя.
      */
     @Test
-    public void whenDeleteUserTasksThenSuccess() {
+    public void whenDeleteUserTasksThenSuccess() throws UserAlreadyExistException {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test4@test4", "password", "some_name");

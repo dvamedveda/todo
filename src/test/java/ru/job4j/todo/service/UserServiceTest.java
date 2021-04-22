@@ -3,6 +3,8 @@ package ru.job4j.todo.service;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.job4j.todo.persistence.exceptions.UnexistUserException;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
 import ru.job4j.todo.persistence.store.StoreSettings;
@@ -24,7 +26,7 @@ public class UserServiceTest {
      * Проверка создания нового пользователя.
      */
     @Test
-    public void whenAddUserThenSuccess() {
+    public void whenAddUserThenSuccess() throws UserAlreadyExistException, UnexistUserException {
         UserService userService = new UserService();
         UserDTO newUser = userService.addNewUser("some@email", "somePass", "someName");
         UserDTO resultUser = userService.getUserByEmail("some@email");
@@ -36,29 +38,32 @@ public class UserServiceTest {
      * Проверка существования пользователя, если пользователь существует.
      */
     @Test
-    public void whenCheckExistUserThenTrue() {
+    public void whenCheckExistUserThenTrue() throws UserAlreadyExistException, UnexistUserException {
         UserService userService = new UserService();
         UserDTO newUser = userService.addNewUser("some1@email", "somePass", "someName");
-        Assert.assertTrue(userService.checkExistUser("some1@email"));
+        Assert.assertEquals(userService.getUserByEmail("some1@email"), newUser);
         userService.deleteUser(newUser);
     }
 
     /**
      * Проверка существования пользователя, если пользователь не существует.
      */
-    @Test
-    public void whenCheckUnexistUserThenFalse() {
+    @Test(expected = UnexistUserException.class)
+    public void whenCheckUnexistUserThenFalse() throws UserAlreadyExistException, UnexistUserException {
         UserService userService = new UserService();
         UserDTO newUser = userService.addNewUser("some1@email", "somePass", "someName");
-        Assert.assertFalse(userService.checkExistUser("some111@email"));
-        userService.deleteUser(newUser);
+        try {
+            userService.getUserByEmail("some111@email");
+        } finally {
+            userService.deleteUser(newUser);
+        }
     }
 
     /**
      * Полученеи объекта пользователя по идентификатору.
      */
     @Test
-    public void whenGetUserByIdThenCorrect() {
+    public void whenGetUserByIdThenCorrect() throws UserAlreadyExistException, UnexistUserException {
         UserService userService = new UserService();
         UserDTO newUser = userService.addNewUser("some2@email", "somePass", "someName");
         UserDTO resultUser = userService.getUserById(newUser.getId());
@@ -70,7 +75,7 @@ public class UserServiceTest {
      * Получение объекта пользователя по почте.
      */
     @Test
-    public void whenGetUserByEmailThenCorrect() {
+    public void whenGetUserByEmailThenCorrect() throws UserAlreadyExistException, UnexistUserException {
         UserService userService = new UserService();
         UserDTO newUser = userService.addNewUser("some3@email", "somePass", "someName");
         UserDTO resultUser = userService.getUserByEmail(newUser.getEmail());

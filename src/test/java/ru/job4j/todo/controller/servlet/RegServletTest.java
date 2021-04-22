@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import ru.job4j.todo.controller.Answers;
+import ru.job4j.todo.persistence.exceptions.UnexistUserException;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.service.ServiceManager;
 import ru.job4j.todo.service.UserService;
@@ -44,7 +46,7 @@ public class RegServletTest {
      * @throws ServletException исключения при работе сервлета.
      */
     @Test
-    public void whenPostValidDataThenLoginPage() throws IOException, ServletException {
+    public void whenPostValidDataThenLoginPage() throws IOException, ServletException, UnexistUserException {
         UserService userService = ServiceManager.getInstance().getUserService();
         String name = "somename", email = "some@email", password = "somepass";
         Answers answers = new Answers();
@@ -75,7 +77,7 @@ public class RegServletTest {
      * @throws ServletException исключения при работе сервлета.
      */
     @Test
-    public void whenPostExistDataThenRegPage() throws IOException, ServletException {
+    public void whenPostExistDataThenRegPage() throws IOException, ServletException, UserAlreadyExistException {
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("some@email", "somepass", "somename");
         String name = "somename", email = "some@email", password = "somepass";

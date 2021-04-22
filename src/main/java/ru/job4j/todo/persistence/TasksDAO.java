@@ -22,7 +22,7 @@ public class TasksDAO {
      * Инициализация фабрики сессий.
      */
     public TasksDAO() {
-        sessionFactory = SessionFactoryManager.getFactory();
+        sessionFactory = SessionFactoryManager.getInstance().getFactory();
     }
 
     /**

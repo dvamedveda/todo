@@ -3,6 +3,9 @@ package ru.job4j.todo.persistence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
+import ru.job4j.todo.persistence.exceptions.UnexistUserException;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.UserDTO;
 
 import java.util.function.Function;
@@ -26,42 +29,59 @@ public class UserDAO {
      * Инициализация объекта для работы с пользователями.
      */
     public UserDAO() {
-        this.sessionFactory = SessionFactoryManager.getFactory();
+        this.sessionFactory = SessionFactoryManager.getInstance().getFactory();
         this.tasksDAO = new TasksDAO();
     }
 
     /**
-     * Сохранить пользователя.
+     * Создать нового пользователя в бд.
      *
-     * @param userDTO объект пользователя.
-     * @return объект пользователя с присвоенным идентификатором.
+     * @param userDTO объект пользователя
+     * @return объект пользователя с идентификатором.
+     * @throws UserAlreadyExistException в случае если пользователь уже существует.
      */
-    public UserDTO saveUser(UserDTO userDTO) {
-        return this.execute(session -> {
-            session.save(userDTO);
-            return userDTO;
-        });
+    public UserDTO saveUser(UserDTO userDTO) throws UserAlreadyExistException {
+        try {
+            return this.execute(session -> {
+                session.save(userDTO);
+                return userDTO;
+            });
+        } catch (ConstraintViolationException e) {
+            throw new UserAlreadyExistException("User with email " + userDTO.getEmail() + " already exist!");
+        }
     }
 
     /**
-     * Найти пользователя по идентификатору.
+     * Найти пользователя по идентификатору
      *
-     * @param id идентификатор пользователя.
-     * @return объект пользователя или null.
+     * @param id идентификатор.
+     * @return объект пользователя.
+     * @throws UnexistUserException в случае, если пользователя с таким id нету.
      */
-    public UserDTO findUserById(int id) {
-        return this.execute(session -> session.get(UserDTO.class, id));
+    public UserDTO findUserById(int id) throws UnexistUserException {
+        UserDTO result = this.execute(session -> session.get(UserDTO.class, id));
+        if (result != null) {
+            return result;
+        } else {
+            throw new UnexistUserException("User with id " + id + " not found.");
+        }
     }
 
     /**
      * Найти пользователя по почте.
      *
-     * @param email почта пользователя.
+     * @param email почта.
      * @return объект пользователя.
+     * @throws UnexistUserException в случае, когда пользователя с таким email нету.
      */
-    public UserDTO findUserByEmail(String email) {
+    public UserDTO findUserByEmail(String email) throws UnexistUserException {
         String query = "from ru.job4j.todo.persistence.models.UserDTO where email=:email";
-        return this.execute(session -> (UserDTO) session.createQuery(query).setParameter("email", email).uniqueResult());
+        UserDTO result = this.execute(session -> (UserDTO) session.createQuery(query).setParameter("email", email).uniqueResult());
+        if (result != null) {
+            return result;
+        } else {
+            throw new UnexistUserException("User with that email not found: " + email);
+        }
     }
 
     /**

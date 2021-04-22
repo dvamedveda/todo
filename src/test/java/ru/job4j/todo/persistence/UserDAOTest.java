@@ -3,6 +3,8 @@ package ru.job4j.todo.persistence;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.job4j.todo.persistence.exceptions.UnexistUserException;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.TaskDTO;
 import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
@@ -29,7 +31,7 @@ public class UserDAOTest {
      * Добавление нового пользователя.
      */
     @Test
-    public void whenAddUserThenSuccess() {
+    public void whenAddUserThenSuccess() throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test11@test", "password", "test", new Timestamp(10L)));
         UserDTO resultUser = userDAO.findUserById(newUser.getId());
@@ -41,7 +43,7 @@ public class UserDAOTest {
      * Поиск пользователя по почте.
      */
     @Test
-    public void whenSearchUserByEmailThenSuccess() {
+    public void whenSearchUserByEmailThenSuccess()throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test22@test", "password", "test", new Timestamp(22L)));
         UserDTO resultUser = userDAO.findUserByEmail(newUser.getEmail());
@@ -52,8 +54,8 @@ public class UserDAOTest {
     /**
      * Проверка удаления задач пользователя при удалении пользователя.
      */
-    @Test
-    public void whenDeleteUserThenTasksDeletedToo() {
+    @Test(expected = UnexistUserException.class)
+    public void whenDeleteUserThenTasksDeletedToo() throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
         TasksDAO tasksDAO = new TasksDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test33@test", "password", "test", new Timestamp(33L)));
@@ -63,6 +65,6 @@ public class UserDAOTest {
         Assert.assertThat(tasksDAO.getUserAllTasks(newUser.getId()).size(), is(2));
         userDAO.deleteUser(newUser);
         Assert.assertThat(tasksDAO.getUserAllTasks(newUser.getId()).size(), is(0));
-        Assert.assertNull(userDAO.findUserById(newUser.getId()));
+        userDAO.findUserById(newUser.getId());
     }
 }

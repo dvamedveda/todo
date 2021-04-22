@@ -3,6 +3,7 @@ package ru.job4j.todo.persistence;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.TaskDTO;
 import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
@@ -31,7 +32,7 @@ public class TasksDAOTest {
      * Тест проверяет успешное добавление задачи в базу данных.
      */
     @Test
-    public void whenAddTaskThenSuccess() {
+    public void whenAddTaskThenSuccess() throws UserAlreadyExistException {
         TasksDAO tasksDAO = new TasksDAO();
         UserDAO userDAO = new UserDAO();
         UserDTO testUser = userDAO.saveUser(new UserDTO("test@test", "password", "test", new Timestamp(1L)));
@@ -50,7 +51,7 @@ public class TasksDAOTest {
      * Тест проверяет изменение задачи в бд.
      */
     @Test
-    public void whenUpdateTaskThenSuccess() {
+    public void whenUpdateTaskThenSuccess() throws UserAlreadyExistException {
         TasksDAO tasksDAO = new TasksDAO();
         UserDAO userDAO = new UserDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test2@test", "password", "test", new Timestamp(1L)));
@@ -71,7 +72,7 @@ public class TasksDAOTest {
      * Тест проверяет получение списка всех задач из бд.
      */
     @Test
-    public void whenGetAllThenReturnsAll() {
+    public void whenGetAllThenReturnsAll() throws UserAlreadyExistException {
         TasksDAO tasksDAO = new TasksDAO();
         UserDAO userDAO = new UserDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test3@test", "password", "test", new Timestamp(1L)));
@@ -100,7 +101,7 @@ public class TasksDAOTest {
      * Тест проверяет получение списка невыполненных задач из бд.
      */
     @Test
-    public void whenGetIncompleteThenReturnsUndone() {
+    public void whenGetIncompleteThenReturnsUndone() throws UserAlreadyExistException {
         TasksDAO tasksDAO = new TasksDAO();
         UserDAO userDAO = new UserDAO();
         UserDTO newUser = userDAO.saveUser(new UserDTO("test4@test", "password", "test", new Timestamp(1L)));

@@ -13,19 +13,9 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
  */
 public class SessionFactoryManager {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-    public static SessionFactory getFactory() {
-        if (sessionFactory == null) {
-            initializeFactory();
-        }
-        return sessionFactory;
-    }
-
-    /**
-     * Инициализация фабрики сессий.
-     */
-    private static void initializeFactory() {
+    private SessionFactoryManager() {
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();
         SessionFactory sf = null;
         try {
@@ -37,5 +27,22 @@ public class SessionFactoryManager {
         }
         LOGGER.info("Hibernate session factory initialized successfully.");
         sessionFactory = sf;
+    }
+
+    private static final class Lazy {
+        private static final SessionFactoryManager INST = new SessionFactoryManager();
+    }
+
+    public static SessionFactoryManager getInstance() {
+        return Lazy.INST;
+    }
+
+    /**
+     * Получить фабрику сессий.
+     *
+     * @return фабрика сессий.
+     */
+    public SessionFactory getFactory() {
+        return this.sessionFactory;
     }
 }
