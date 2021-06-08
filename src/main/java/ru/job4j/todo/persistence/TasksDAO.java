@@ -3,13 +3,14 @@ package ru.job4j.todo.persistence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import ru.job4j.todo.persistence.models.CategoryDTO;
 import ru.job4j.todo.persistence.models.TaskDTO;
 
 import java.util.List;
 import java.util.function.Function;
 
 /**
- * Класс, реализующий персистенс слой todo-сервиса.
+ * Persistense-объект, реализующий персистенс слой todo-сервиса.
  */
 public class TasksDAO {
 
@@ -32,7 +33,7 @@ public class TasksDAO {
      */
     public List getAllTasks() {
         return this.execute(session -> session.createQuery(
-                "from ru.job4j.todo.persistence.models.TaskDTO t order by t.id desc").list());
+                "select distinct t from ru.job4j.todo.persistence.models.TaskDTO t left join fetch t.categoryDTOList order by t.id desc").list());
     }
 
     /**
@@ -43,7 +44,7 @@ public class TasksDAO {
      */
     public List getUserAllTasks(int id) {
         return this.execute(session -> session.createQuery(
-                "from ru.job4j.todo.persistence.models.TaskDTO t where t.user.id=:id order by t.id desc")
+                "select distinct t from ru.job4j.todo.persistence.models.TaskDTO t left join fetch t.categoryDTOList where t.user.id=:id order by t.id desc")
                 .setParameter("id", id)
                 .list());
     }
@@ -55,7 +56,7 @@ public class TasksDAO {
      */
     public List getIncompleteTasks() {
         return this.execute(session -> session.createQuery(
-                "from ru.job4j.todo.persistence.models.TaskDTO t where t.done = false order by t.id desc").list());
+                "select distinct t from ru.job4j.todo.persistence.models.TaskDTO t left join fetch t.categoryDTOList where t.done = false order by t.id desc").list());
     }
 
     /**

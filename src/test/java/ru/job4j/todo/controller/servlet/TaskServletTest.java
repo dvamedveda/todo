@@ -15,6 +15,8 @@ import ru.job4j.todo.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
+
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -41,7 +43,7 @@ public class TaskServletTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("som1@email", "password", "name");
-        TaskDTO task = todoService.addNewTask("new task from controller", newUser);
+        TaskDTO task = todoService.addNewTask("new task from controller", newUser, new ArrayList<>());
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
         Mockito.when(req.getParameter("id")).thenReturn(Integer.toString(task.getId()));

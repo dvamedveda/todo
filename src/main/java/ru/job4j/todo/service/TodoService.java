@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.job4j.todo.persistence.CategoryDAO;
 import ru.job4j.todo.persistence.TasksDAO;
 import ru.job4j.todo.persistence.models.TaskDTO;
 import ru.job4j.todo.persistence.models.UserDTO;
@@ -16,6 +17,7 @@ import java.util.List;
 public class TodoService {
     private static final Logger LOGGER = LogManager.getLogger();
     private final TasksDAO tasksDAO = new TasksDAO();
+    private final CategoryDAO categoryDAO = new CategoryDAO();
 
     /**
      * Получение всех задач в сервисе.
@@ -57,8 +59,11 @@ public class TodoService {
      * @param description описание новой задачи.
      * @return объект созданной задачи.
      */
-    public TaskDTO addNewTask(String description, UserDTO user) {
+    public TaskDTO addNewTask(String description, UserDTO user, List<Integer> categories) {
         TaskDTO task = new TaskDTO(description, new Timestamp(System.currentTimeMillis()), false, user);
+        for (Integer id : categories) {
+            task.addCategory(categoryDAO.getCategoryById(id));
+        }
         return tasksDAO.addTask(task);
     }
 
@@ -98,9 +103,12 @@ public class TodoService {
 
     /**
      * Удалить задачи пользователя.
+     *
      * @param id идентификатор пользователя.
      */
     public void deleteUserTasks(int id) {
         tasksDAO.deleteUserTasks(id);
     }
+
+
 }

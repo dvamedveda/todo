@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -52,9 +53,10 @@ public class TodoServletTest {
         HttpSession session = Mockito.mock(HttpSession.class);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
-        Mockito.doAnswer(answers.new SetAnswer()).when(session).setAttribute(Mockito.anyString(), Mockito.anyObject());
+        Mockito.doAnswer(answers.new SetAnswer()).when(session).setAttribute(Mockito.anyString(), Mockito.any());
         Mockito.doAnswer(answers.new GetAnswer()).when(session).getAttribute(Mockito.anyString());
         Mockito.when(req.getParameter("description")).thenReturn("task added from controller");
+        Mockito.when(req.getParameter("categoryIds")).thenReturn("[]");
         Mockito.when(req.getSession()).thenReturn(session);
         Mockito.when(session.getAttribute("user")).thenReturn(newUser);
         Assert.assertThat(todoService.getAllTasksAsJson(), is("[]"));
@@ -80,8 +82,8 @@ public class TodoServletTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("som3@email", "password", "name");
-        TaskDTO completedTask = todoService.addNewTask("completed from controller", newUser);
-        TaskDTO incompletedTask = todoService.addNewTask("incompleted from controller", newUser);
+        TaskDTO completedTask = todoService.addNewTask("completed from controller", newUser, new ArrayList<>());
+        TaskDTO incompletedTask = todoService.addNewTask("incompleted from controller", newUser, new ArrayList<>());
         todoService.checkTask(completedTask.getId(), true);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
@@ -99,14 +101,16 @@ public class TodoServletTest {
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append(",")
                 .append(String.format("{\"id\":%s,\"description\":\"completed from controller\",", completedTask.getId()))
                 .append(String.format("\"created\":%s,\"done\":true,", completedTask.getCreated().getTime()))
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append("]")
                 .toString();
         String result = testOut.toString();
@@ -126,8 +130,8 @@ public class TodoServletTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("som4@email", "password", "name");
-        TaskDTO completedTask = todoService.addNewTask("completed from controller", newUser);
-        TaskDTO incompletedTask = todoService.addNewTask("incompleted from controller", newUser);
+        TaskDTO completedTask = todoService.addNewTask("completed from controller", newUser, new ArrayList<>());
+        TaskDTO incompletedTask = todoService.addNewTask("incompleted from controller", newUser, new ArrayList<>());
         todoService.checkTask(completedTask.getId(), true);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse resp = Mockito.mock(HttpServletResponse.class);
@@ -145,7 +149,8 @@ public class TodoServletTest {
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append("]")
                 .toString();
         String result = testOut.toString();

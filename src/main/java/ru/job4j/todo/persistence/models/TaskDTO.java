@@ -2,6 +2,8 @@ package ru.job4j.todo.persistence.models;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -36,9 +38,25 @@ public class TaskDTO {
     @Column
     private boolean done;
 
+    /**
+     * Юзер-хозяин задачи.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserDTO user;
+
+    /**
+     * Список категорий задачи, может быть пустым.
+     * Категории в списке отсортированы по возрастанию id.
+     */
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "categories_tasks",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    @OrderBy("id asc")
+    private List<CategoryDTO> categoryDTOList = new ArrayList<>();
 
     public TaskDTO() {
     }
@@ -89,5 +107,13 @@ public class TaskDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public List<CategoryDTO> getCategoryDTOList() {
+        return categoryDTOList;
+    }
+
+    public void addCategory(CategoryDTO categoryDTO) {
+        this.categoryDTOList.add(categoryDTO);
     }
 }

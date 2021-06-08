@@ -8,12 +8,13 @@
         <property name="hibernate.connection.url">jdbc:postgresql://127.0.0.1:5432/todo</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">postgres</property>
-        <property name="hibernate.connection.pool_size">1</property>
+        <property name="hibernate.connection.pool_size">2</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</property>
 
         <mapping class="ru.job4j.todo.persistence.models.TaskDTO" />
         <mapping class="ru.job4j.todo.persistence.models.UserDTO" />
+        <mapping class="ru.job4j.todo.persistence.models.CategoryDTO" />
     </session-factory>
 </hibernate-configuration>

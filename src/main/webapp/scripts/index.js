@@ -6,6 +6,7 @@
 const REFRESH_DELAY = 30000;
 
 $(document).ready(getTasks);
+$(document).ready(getCategories);
 $(document).ready(autoRefresh);
 
 /**
@@ -31,6 +32,10 @@ function getTasks() {
             let author = task.user.name;
             let checked = done ? "checked" : "";
             let disabled = $("#user").text().trim() === author ? "" : "disabled";
+            let categories = '';
+            for (let category of task.categoryDTOList) {
+                categories += category.name + "<br>"
+            }
             let row = `
         <tr>
             <td>${description}</td>
@@ -42,9 +47,34 @@ function getTasks() {
                 </div>
             </td>
             <td>${author}</td>
+            <td>${categories}</td>
         </tr>
         `;
             $("#table_body").append(row);
+        }
+    }).fail(function (error) {
+        console.log("Что-то пошло не так! Запрос не выполнился!")
+    })
+}
+
+/**
+ * Получение списка категорий с сервера.
+ */
+function getCategories() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/todo/category.do',
+        dataType: 'json'
+    }).done(function (data) {
+        let response = JSON.parse(JSON.stringify(data));
+        $("#categories").empty();
+        for (let category of response) {
+            let id = category.id;
+            let name = category.name;
+            let option = `
+            <option id="${id}">${name}</option>
+        `;
+            $("#categories").append(option);
         }
     }).fail(function (error) {
         console.log("Что-то пошло не так! Запрос не выполнился!")
@@ -56,6 +86,7 @@ function getTasks() {
  * для обновления списка задача.
  */
 function refresh() {
+    getCategories();
     getTasks();
     setTimeout(refresh, REFRESH_DELAY);
 }
@@ -73,15 +104,23 @@ function autoRefresh() {
 $("#submit_task").click(
     function (event) {
         let input = $("#task_form").children("#task_description");
+        let selectedIds = [];
+        for (let children of $("#categories").children()) {
+            if (children.selected === true) {
+                selectedIds.push(children.id);
+            }
+        }
         $.ajax({
             type: 'POST',
             url: 'http://localhost:8080/todo/todo.do',
             data: {
-                description: input[0].value
+                description: input[0].value,
+                categoryIds: JSON.stringify(selectedIds)
             }
         }).done(function (data) {
             input[0].value = "";
             getTasks();
+            getCategories();
         }).fail(function (error) {
             console.log("Что-то пошло не так! Запрос не выполнился!")
         })

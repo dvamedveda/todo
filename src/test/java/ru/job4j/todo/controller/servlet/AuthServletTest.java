@@ -1,11 +1,14 @@
 package ru.job4j.todo.controller.servlet;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import ru.job4j.todo.controller.Answers;
 import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.UserDTO;
+import ru.job4j.todo.persistence.store.DatabaseUpdater;
+import ru.job4j.todo.persistence.store.StoreSettings;
 import ru.job4j.todo.service.ServiceManager;
 import ru.job4j.todo.service.UserService;
 
@@ -20,6 +23,15 @@ import java.io.IOException;
  * Тесты класса AuthServlet.
  */
 public class AuthServletTest {
+
+    /**
+     * Преварительная проверка и обновление тестовой базы данных.
+     */
+    @BeforeClass
+    public static void setUp() {
+        DatabaseUpdater updater = new DatabaseUpdater(StoreSettings.TEST_DB_FILE);
+        updater.updateDatabase();
+    }
 
     /**
      * Проверка перенаправления на главную страницу при успешной аутентификации.

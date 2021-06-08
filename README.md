@@ -18,6 +18,8 @@ It used DAO/DTO, Singleton templates.
 - user can add task that need to do, by specifying task's description and hit "Submit" button;
 - application can show to user undone tasks or all tasks, including done tasks from other users;
 - user can mark own tasks as done/undone, and that shown immediately in list;
+- user can predefine some categories for tasks through db
+- user can set few categories for task while creating
 - user cannot done/undone other user's task, but can view it;
 - application supports automatic refreshing state of todo list;  
 - web app automatically update/check database state on startup.
@@ -28,9 +30,9 @@ It used DAO/DTO, Singleton templates.
 - auth page shows as
 ![auth](https://github.com/dvamedveda/screenshots/blob/main/todo/auth_page.png?raw=true)  
 - tasks shows as
-![index](https://github.com/dvamedveda/screenshots/blob/main/todo/index_page.png?raw=true)  
+![index](https://github.com/dvamedveda/screenshots/blob/main/todo/categorized_index_page.png?raw=true)  
 
 ### Used frameworks, libs, technologies:
 - Java, Servlets, Maven, JUnit, JSP, JSTL, Log4j, Mock, PowerMock, Jackson
 - JS, jQuery, Twitter Bootstrap
-- Hibernate, Postgresql, JDBC, Flyway
+- Hibernate/JPA, Postgresql, JDBC, Flyway

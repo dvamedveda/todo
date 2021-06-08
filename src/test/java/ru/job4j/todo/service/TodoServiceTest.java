@@ -9,6 +9,8 @@ import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
 import ru.job4j.todo.persistence.store.StoreSettings;
 
+import java.util.ArrayList;
+
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -33,7 +35,7 @@ public class TodoServiceTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test1@test1", "password", "some_name");
-        TaskDTO task = todoService.addNewTask("some test task", newUser);
+        TaskDTO task = todoService.addNewTask("some test task", newUser, new ArrayList<>());
         TaskDTO result = todoService.getTaskById(task.getId());
         Assert.assertThat(result.getId(), is(task.getId()));
         Assert.assertThat(result.getDescription(), is("some test task"));
@@ -52,7 +54,7 @@ public class TodoServiceTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test2@test2", "password", "some_name");
-        TaskDTO task = todoService.addNewTask("new test task", newUser);
+        TaskDTO task = todoService.addNewTask("new test task", newUser, new ArrayList<>());
         todoService.checkTask(task.getId(), true);
         TaskDTO result = todoService.getTaskById(task.getId());
         Assert.assertThat(result.getId(), is(task.getId()));
@@ -72,8 +74,8 @@ public class TodoServiceTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test3@test3", "password", "some_name");
-        TaskDTO taskCompleted = todoService.addNewTask("completed task", newUser);
-        TaskDTO taskIncompleted = todoService.addNewTask("incompleted task", newUser);
+        TaskDTO taskCompleted = todoService.addNewTask("completed task", newUser, new ArrayList<>());
+        TaskDTO taskIncompleted = todoService.addNewTask("incompleted task", newUser, new ArrayList<>());
         todoService.checkTask(taskCompleted.getId(), true);
         int completedId = taskCompleted.getId();
         long completedTime = taskCompleted.getCreated().getTime();
@@ -86,14 +88,16 @@ public class TodoServiceTest {
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append(",")
                 .append(String.format("{\"id\":%s,\"description\":\"completed task\",", completedId))
                 .append(String.format("\"created\":%s,\"done\":true,", completedTime))
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append("]")
                 .toString();
         String result = todoService.getAllTasksAsJson();
@@ -111,8 +115,8 @@ public class TodoServiceTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test4@test4", "password", "some_name");
-        TaskDTO taskCompleted = todoService.addNewTask("test completed task", newUser);
-        TaskDTO taskIncompleted = todoService.addNewTask("test incompleted task", newUser);
+        TaskDTO taskCompleted = todoService.addNewTask("test completed task", newUser, new ArrayList<>());
+        TaskDTO taskIncompleted = todoService.addNewTask("test incompleted task", newUser, new ArrayList<>());
         todoService.checkTask(taskCompleted.getId(), true);
         int incompletedId = taskIncompleted.getId();
         long incompletedTime = taskIncompleted.getCreated().getTime();
@@ -123,7 +127,8 @@ public class TodoServiceTest {
                 .append("\"user\":{")
                 .append(String.format("\"id\":%s,\"email\":\"%s\",", newUser.getId(), newUser.getEmail()))
                 .append(String.format("\"password\":\"%s\",\"name\":\"%s\",", newUser.getPassword(), newUser.getName()))
-                .append(String.format("\"registered\":%s}}", newUser.getRegistered().getTime()))
+                .append(String.format("\"registered\":%s},", newUser.getRegistered().getTime()))
+                .append("\"categoryDTOList\":[]}")
                 .append("]")
                 .toString();
         String result = todoService.getIncompleteTasksAsJson();
@@ -141,8 +146,8 @@ public class TodoServiceTest {
         TodoService todoService = ServiceManager.getInstance().getTodoService();
         UserService userService = ServiceManager.getInstance().getUserService();
         UserDTO newUser = userService.addNewUser("test4@test4", "password", "some_name");
-        todoService.addNewTask("test completed task1", newUser);
-        todoService.addNewTask("test incompleted task2", newUser);
+        todoService.addNewTask("test completed task1", newUser, new ArrayList<>());
+        todoService.addNewTask("test incompleted task2", newUser, new ArrayList<>());
         todoService.deleteUserTasks(newUser.getId());
         userService.deleteUser(newUser);
         Assert.assertThat(todoService.getAllTasksAsJson(), is("[]"));

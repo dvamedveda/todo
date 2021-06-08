@@ -1,5 +1,6 @@
 package ru.job4j.todo.controller.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.todo.persistence.models.UserDTO;
@@ -13,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сервлет для работы со списком задач.
@@ -61,9 +66,18 @@ public class TodoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String description = req.getParameter("description");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String[] categoryIds = objectMapper.readValue(req.getParameter("categoryIds"), String[].class);
+        List<Integer> categories;
+        if (categoryIds != null) {
+            categories = Arrays.stream(categoryIds).map(Integer::parseInt).collect(Collectors.toList());
+        } else {
+            categories = new ArrayList<>();
+        }
         HttpSession session = req.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
         LOGGER.info("Creating new task with description \"" + description + "\", author: " + user.getName() + ".");
-        service.addNewTask(description, user);
+        LOGGER.info("With category ids: " + categories.toString());
+        service.addNewTask(description, user, categories);
     }
 }

@@ -11,7 +11,7 @@ import ru.job4j.todo.persistence.models.UserDTO;
 import java.util.function.Function;
 
 /**
- * Объект для работы с пользователями.
+ * Persistense-объект для работы с пользователями.
  */
 public class UserDAO {
 

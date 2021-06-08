@@ -63,7 +63,10 @@
     <div class="row pt-3 mx-2 px-2 my-1 py-1">
         <div class="col">
             <div id="task_form">
-                <label for="task_description">Описание:</label>
+                <label>Список категорий:</label>
+                <select multiple class="form-control" id="categories">
+                </select>
+                <label>Описание:</label>
                 <input type="text" class="form-control" id="task_description" name="description">
             </div>
         </div>
@@ -103,6 +106,7 @@
                 <th style="width: 20%;">Создана</th>
                 <th style="width: 10%;">Выполнена</th>
                 <th style="width: 10%;">Автор</th>
+                <th style="width: 10%;">Категории</th>
             </tr>
             </thead>
             <tbody id="table_body">

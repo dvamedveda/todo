@@ -52,6 +52,10 @@
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>ru.job4j.todo.controller.servlet.LogoutServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CategoryServlet</servlet-name>
+        <servlet-class>ru.job4j.todo.controller.servlet.CategoryServlet</servlet-class>
+    </servlet>
 
     <!-- Маппинг сервлетов. -->
     <servlet-mapping>
@@ -77,5 +81,9 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logout.do</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CategoryServlet</servlet-name>
+        <url-pattern>/category.do</url-pattern>
     </servlet-mapping>
 </web-app>

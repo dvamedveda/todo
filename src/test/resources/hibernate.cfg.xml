@@ -15,5 +15,6 @@
 
         <mapping class="ru.job4j.todo.persistence.models.TaskDTO" />
         <mapping class="ru.job4j.todo.persistence.models.UserDTO" />
+        <mapping class="ru.job4j.todo.persistence.models.CategoryDTO" />
     </session-factory>
 </hibernate-configuration>
