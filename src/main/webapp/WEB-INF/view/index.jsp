@@ -64,10 +64,10 @@
         <div class="col">
             <div id="task_form">
                 <label>Список категорий:</label>
-                <select multiple class="form-control" id="categories">
+                <select multiple class="form-control categories_input" id="categories">
                 </select>
                 <label>Описание:</label>
-                <input type="text" class="form-control" id="task_description" name="description">
+                <input type="text" class="form-control description_input" id="task_description" name="description">
             </div>
         </div>
     </div>

@@ -14,12 +14,13 @@ It used DAO/DTO, Singleton templates.
 
 ### Application features:
 
-- you can register in application as user and use rigister credentials to auth;
+- you can register in application as user and use register credentials to authenticate;
 - user can add task that need to do, by specifying task's description and hit "Submit" button;
 - application can show to user undone tasks or all tasks, including done tasks from other users;
 - user can mark own tasks as done/undone, and that shown immediately in list;
-- user can predefine some categories for tasks through db
-- user can set few categories for task while creating
+- user can predefine some categories for tasks through db;
+- user can set few categories for task while creating;
+- application validates creating task for not empty description AND at least one task category;
 - user cannot done/undone other user's task, but can view it;
 - application supports automatic refreshing state of todo list;  
 - web app automatically update/check database state on startup.

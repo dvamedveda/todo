@@ -103,29 +103,70 @@ function autoRefresh() {
  */
 $("#submit_task").click(
     function (event) {
-        let input = $("#task_form").children("#task_description");
-        let selectedIds = [];
-        for (let children of $("#categories").children()) {
-            if (children.selected === true) {
-                selectedIds.push(children.id);
+        if (validate_task_description() === false) {
+            if (!$.contains(document.querySelector('#task_form'), document.querySelector('#task_form > .description_input + .alert'))) {
+                $('#task_description').after('<div class="alert alert-danger" role="alert">' +
+                    'Описание задачи не может быть пустым!' +
+                    '</div>');
             }
+            $('#task_form > .description_input + .alert').show().fadeOut(1000);
+            event.preventDefault();
+        } else if (validate_selected_categories() === false) {
+            if (!$.contains(document.querySelector('#task_form'), document.querySelector('#task_form > .categories_input + .alert'))) {
+                $('#categories').after('<div class="alert alert-danger" role="alert">' +
+                    'Нужно выбрать одну или несколько категорий!' +
+                    '</div>');
+            }
+            $('#task_form > .categories_input + .alert').show().fadeOut(1000);
+            event.preventDefault();
+        } else {
+            submit(event);
         }
-        $.ajax({
-            type: 'POST',
-            url: 'http://localhost:8080/todo/todo.do',
-            data: {
-                description: input[0].value,
-                categoryIds: JSON.stringify(selectedIds)
-            }
-        }).done(function (data) {
-            input[0].value = "";
-            getTasks();
-            getCategories();
-        }).fail(function (error) {
-            console.log("Что-то пошло не так! Запрос не выполнился!")
-        })
     }
 );
+
+function validate_selected_categories() {
+    let selectedIds = [];
+    for (let children of $("#categories").children()) {
+        if (children.selected === true) {
+            selectedIds.push(children.id);
+        }
+    }
+    if (selectedIds.length > 0) {
+        return true;
+    } else if (selectedIds.length === 0) {
+        return false
+    }
+}
+
+function validate_task_description() {
+    let input = $("#task_form").children("#task_description");
+    return input[0].value !== "";
+}
+
+function submit(event) {
+    let input = $("#task_form").children("#task_description");
+    let selectedIds = [];
+    for (let children of $("#categories").children()) {
+        if (children.selected === true) {
+            selectedIds.push(children.id);
+        }
+    }
+    $.ajax({
+        type: 'POST',
+        url: 'http://localhost:8080/todo/todo.do',
+        data: {
+            description: input[0].value,
+            categoryIds: JSON.stringify(selectedIds)
+        }
+    }).done(function (data) {
+        input[0].value = "";
+        getTasks();
+        getCategories();
+    }).fail(function (error) {
+        console.log("Что-то пошло не так! Запрос не выполнился!")
+    })
+}
 
 /**
  * Обработка клика на флаг выполненности задачи.

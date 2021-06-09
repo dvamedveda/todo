@@ -68,12 +68,7 @@ public class TodoServlet extends HttpServlet {
         String description = req.getParameter("description");
         ObjectMapper objectMapper = new ObjectMapper();
         String[] categoryIds = objectMapper.readValue(req.getParameter("categoryIds"), String[].class);
-        List<Integer> categories;
-        if (categoryIds != null) {
-            categories = Arrays.stream(categoryIds).map(Integer::parseInt).collect(Collectors.toList());
-        } else {
-            categories = new ArrayList<>();
-        }
+        List<Integer> categories = Arrays.stream(categoryIds).map(Integer::parseInt).collect(Collectors.toList());
         HttpSession session = req.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
         LOGGER.info("Creating new task with description \"" + description + "\", author: " + user.getName() + ".");
