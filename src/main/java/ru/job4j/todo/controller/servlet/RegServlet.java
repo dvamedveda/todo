@@ -3,7 +3,6 @@ package ru.job4j.todo.controller.servlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
-import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.service.ServiceManager;
 import ru.job4j.todo.service.UserService;
 

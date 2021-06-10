@@ -1,7 +1,6 @@
 package ru.job4j.todo.controller.filter;
 
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.job4j.todo.controller.Answers;
 

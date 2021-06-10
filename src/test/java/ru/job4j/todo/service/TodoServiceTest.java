@@ -45,7 +45,7 @@ public class TodoServiceTest {
         TaskDTO result = todoService.getTaskById(task.getId());
         Assert.assertThat(result.getId(), is(task.getId()));
         Assert.assertThat(result.getDescription(), is("some test task"));
-        Assert.assertThat(result.getCreated(), is(task.getCreated()));
+        Assert.assertThat(result.getCreated().getTime(), is(task.getCreated().getTime()));
         Assert.assertThat(result.isDone(), is(false));
         Assert.assertEquals(result.getUser(), newUser);
         todoService.deleteTask(result.getId());
@@ -70,7 +70,7 @@ public class TodoServiceTest {
         TaskDTO result = todoService.getTaskById(task.getId());
         Assert.assertThat(result.getId(), is(task.getId()));
         Assert.assertThat(result.getDescription(), is("new test task"));
-        Assert.assertThat(result.getCreated(), is(task.getCreated()));
+        Assert.assertThat(result.getCreated().getTime(), is(task.getCreated().getTime()));
         Assert.assertThat(result.isDone(), is(true));
         Assert.assertEquals(result.getUser(), newUser);
         todoService.deleteTask(result.getId());

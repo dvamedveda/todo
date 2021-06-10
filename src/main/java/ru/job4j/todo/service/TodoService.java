@@ -8,7 +8,7 @@ import ru.job4j.todo.persistence.TasksDAO;
 import ru.job4j.todo.persistence.models.TaskDTO;
 import ru.job4j.todo.persistence.models.UserDTO;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,7 +60,7 @@ public class TodoService {
      * @return объект созданной задачи.
      */
     public TaskDTO addNewTask(String description, UserDTO user, List<Integer> categories) {
-        TaskDTO task = new TaskDTO(description, new Timestamp(System.currentTimeMillis()), false, user);
+        TaskDTO task = new TaskDTO(description, new Date(System.currentTimeMillis()), false, user);
         for (Integer id : categories) {
             task.addCategory(categoryDAO.getCategoryById(id));
         }

@@ -1,7 +1,7 @@
 package ru.job4j.todo.persistence.models;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -43,7 +43,8 @@ public class UserDTO {
      * Время регистрации пользователя.
      */
     @Column
-    private Timestamp registered;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registered;
 
     public int getId() {
         return id;
@@ -77,11 +78,11 @@ public class UserDTO {
         this.name = name;
     }
 
-    public Timestamp getRegistered() {
+    public Date getRegistered() {
         return registered;
     }
 
-    public void setRegistered(Timestamp registered) {
+    public void setRegistered(Date registered) {
         this.registered = registered;
     }
 
@@ -89,7 +90,7 @@ public class UserDTO {
 
     };
 
-    public UserDTO(String email, String password, String name, Timestamp registered) {
+    public UserDTO(String email, String password, String name, Date registered) {
         this.id = 0;
         this.email = email;
         this.password = password;
@@ -110,11 +111,11 @@ public class UserDTO {
                 && Objects.equals(this.getEmail(), userDTO.email)
                 && Objects.equals(this.getPassword(), userDTO.password)
                 && Objects.equals(this.getName(), userDTO.name)
-                && Objects.equals(this.getRegistered(), userDTO.registered);
+                && Objects.equals(this.getRegistered().getTime(), userDTO.registered.getTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, name, registered);
+        return Objects.hash(id, email, password, name, registered.getTime());
     }
 }

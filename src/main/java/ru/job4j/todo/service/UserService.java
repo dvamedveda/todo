@@ -8,7 +8,7 @@ import ru.job4j.todo.persistence.exceptions.UnexistUserException;
 import ru.job4j.todo.persistence.exceptions.UserAlreadyExistException;
 import ru.job4j.todo.persistence.models.UserDTO;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 
 /**
  * Класс сервиса для работы с пользователями.
@@ -28,7 +28,7 @@ public class UserService {
      * @throws UserAlreadyExistException в случае, когда такой пользователь уже существует.
      */
     public UserDTO addNewUser(String email, String password, String name) throws UserAlreadyExistException {
-        return userDAO.saveUser(new UserDTO(email, password, name, new Timestamp(System.currentTimeMillis())));
+        return userDAO.saveUser(new UserDTO(email, password, name, new Date(System.currentTimeMillis())));
     }
 
     /**

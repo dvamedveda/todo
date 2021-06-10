@@ -1,8 +1,8 @@
 package ru.job4j.todo.persistence.models;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,7 +30,8 @@ public class TaskDTO {
      * Время создания задачи.
      */
     @Column
-    private Timestamp created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
     /**
      * Флаг выполнения задачи.
@@ -61,7 +62,7 @@ public class TaskDTO {
     public TaskDTO() {
     }
 
-    public TaskDTO(String description, Timestamp created, boolean done, UserDTO userDTO) {
+    public TaskDTO(String description, Date created, boolean done, UserDTO userDTO) {
         this.id = 0;
         this.description = description;
         this.created = created;
@@ -85,11 +86,11 @@ public class TaskDTO {
         this.description = description;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 

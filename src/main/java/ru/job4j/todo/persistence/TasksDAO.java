@@ -3,7 +3,6 @@ package ru.job4j.todo.persistence;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import ru.job4j.todo.persistence.models.CategoryDTO;
 import ru.job4j.todo.persistence.models.TaskDTO;
 
 import java.util.List;

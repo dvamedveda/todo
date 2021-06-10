@@ -10,7 +10,7 @@ import ru.job4j.todo.persistence.models.UserDTO;
 import ru.job4j.todo.persistence.store.DatabaseUpdater;
 import ru.job4j.todo.persistence.store.StoreSettings;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -33,7 +33,7 @@ public class UserDAOTest {
     @Test
     public void whenAddUserThenSuccess() throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
-        UserDTO newUser = userDAO.saveUser(new UserDTO("test11@test", "password", "test", new Timestamp(10L)));
+        UserDTO newUser = userDAO.saveUser(new UserDTO("test11@test", "password", "test", new Date(10L)));
         UserDTO resultUser = userDAO.findUserById(newUser.getId());
         Assert.assertEquals(resultUser, newUser);
         userDAO.deleteUser(resultUser);
@@ -45,7 +45,7 @@ public class UserDAOTest {
     @Test
     public void whenSearchUserByEmailThenSuccess()throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
-        UserDTO newUser = userDAO.saveUser(new UserDTO("test22@test", "password", "test", new Timestamp(22L)));
+        UserDTO newUser = userDAO.saveUser(new UserDTO("test22@test", "password", "test", new Date(22L)));
         UserDTO resultUser = userDAO.findUserByEmail(newUser.getEmail());
         Assert.assertEquals(resultUser, newUser);
         userDAO.deleteUser(resultUser);
@@ -58,10 +58,10 @@ public class UserDAOTest {
     public void whenDeleteUserThenTasksDeletedToo() throws UserAlreadyExistException, UnexistUserException {
         UserDAO userDAO = new UserDAO();
         TasksDAO tasksDAO = new TasksDAO();
-        UserDTO newUser = userDAO.saveUser(new UserDTO("test33@test", "password", "test", new Timestamp(33L)));
+        UserDTO newUser = userDAO.saveUser(new UserDTO("test33@test", "password", "test", new Date(33L)));
         Assert.assertThat(tasksDAO.getUserAllTasks(newUser.getId()).size(), is(0));
-        tasksDAO.addTask(new TaskDTO("completed task description", new Timestamp(1L), true, newUser));
-        tasksDAO.addTask(new TaskDTO("incompleted task description", new Timestamp(1L), false, newUser));
+        tasksDAO.addTask(new TaskDTO("completed task description", new Date(1L), true, newUser));
+        tasksDAO.addTask(new TaskDTO("incompleted task description", new Date(1L), false, newUser));
         Assert.assertThat(tasksDAO.getUserAllTasks(newUser.getId()).size(), is(2));
         userDAO.deleteUser(newUser);
         Assert.assertThat(tasksDAO.getUserAllTasks(newUser.getId()).size(), is(0));

@@ -51,7 +51,7 @@ public class TaskServletTest {
         new TaskServlet().doPost(req, resp);
         TaskDTO result = todoService.getTaskById(task.getId());
         Assert.assertThat(result.getDescription(), is(task.getDescription()));
-        Assert.assertThat(result.getCreated(), is(task.getCreated()));
+        Assert.assertThat(result.getCreated().getTime(), is(task.getCreated().getTime()));
         Assert.assertThat(result.isDone(), is(true));
         todoService.deleteTask(result.getId());
         userService.deleteUser(newUser);
